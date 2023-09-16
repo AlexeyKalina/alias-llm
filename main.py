@@ -1,34 +1,52 @@
 import os
 import random
-from typing import List, Optional
+from typing import List, Tuple
+
 import openai
 
 
 def description_prompt(word: str) -> str:
     return f"""
 I want you to play alias game with an user.
-Your word is "{word}". You need to provide a simple description of this word. Remember: never say the word {word} and its cognates!!! Answer with one sentence. 
+Your word is "{word}".
+You need to provide a simple description of this word.
+Remember: never say the word {word} and its cognates!!!
+Answer with one sentence. 
 """
 
 
-def another_description_prompt(word: str, user_word: str, previous_descriptions: List[str]):
+def another_description_prompt(word: str, previous: List[Tuple[str, str]]):
+    prev_tries = "\n".join([f" - Description: \"{pair[0]}\". Guess: \"{pair[1]}\"" for pair in previous])
     return f"""
 You're playing Alias game with an user.
-Your word is "{word}". The user was wrong. He answered: "{user_word}" on your previous description: "{previous_descriptions[0]}". You need to help the user to find the right answer without saying word "{word}". You can provide another description or describe the difference between the right answer and the user answer but without saying word "{word}". Remember: NEVER SAY THE ANSWER (word {word}) and its cognates!!! Answer with one sentence addressing the user.
+User is trying to guess the word "{word}".
+The user answered wrong. There are previous descriptions and user answers:
+{prev_tries}
+You need to help the user to find the right answer without saying the word "{word}".
+You can provide another description or describe the difference between the right answer and the user answers but without saying word "{word}".
+Remember: NEVER SAY THE ANSWER (word {word}) and its cognates!!!
+Answer with one sentence addressing the user.
 """
 
 
 def guess_prompt(description: str):
     return f"""
 I want you to play alias game with an user.
-Guess the word by user description: "{description}". Answer with one word. 
+Guess the word by user description: "{description}".
+Answer with one word. 
 """
 
 
-def another_guess_prompt(description: str, previous_description: str, previous_word: str):
+def another_guess_prompt(description: str, previous: List[Tuple[str, str]]):
+    prev_tries = "\n".join([f" - Description: \"{pair[0]}\". Guess: \"{pair[1]}\"" for pair in previous])
     return f"""
 You're playing Alias game with an user.
-You guessed wrong. Your answer was "{previous_word}". Previous description: "{previous_description}". New description: "{description}". Guess the word by user descriptions. Answer with one word. 
+You're trying to guess the word that user are describing.
+There are previous user descriptions and wrong answers:
+{prev_tries}
+The user provided a new description: {description}.
+Guess the word by user descriptions.
+Answer with one word. 
 """
 
 
@@ -52,11 +70,11 @@ def ask_llm(message: str) -> str:
     return get_completion_from_messages(messages, temperature=0.2)
 
 
-def guess(word: str, user_word: Optional[str] = None, previous: Optional[str] = None) -> bool:
-    if previous is None:
+def guess(word: str, previous: List[Tuple[str, str]]) -> bool:
+    if len(previous) == 0:
         description = ask_llm(description_prompt(word))
     else:
-        description = ask_llm(another_description_prompt(word, user_word, [previous]))
+        description = ask_llm(another_description_prompt(word, previous))
     print(f"Guess the word: {description}")
     answer = input().lower().strip()
     if answer == word:
@@ -68,11 +86,12 @@ def guess(word: str, user_word: Optional[str] = None, previous: Optional[str] = 
         return True
     else:
         print("No, let's try again!")
-        return guess(word, answer, description)
+        previous.append((description, answer))
+        return guess(word, previous)
     return False
 
 
-def describe(word: str, previous_sentence: Optional[str] = None, previous_word: Optional[str] = None) -> bool:
+def describe(word: str, previous: List[Tuple[str, str]]) -> bool:
     print(f'Describe the word: "{word}"')
     description = input().lower().strip()
     if description == 'idk':
@@ -80,17 +99,18 @@ def describe(word: str, previous_sentence: Optional[str] = None, previous_word: 
     if description == 'change_rule':
         print("It's your turn to guess!")
         return True
-    if previous_word is None:
+    if len(previous) == 0:
         answer = ask_llm(guess_prompt(description))
     else:
-        answer = ask_llm(another_guess_prompt(description, previous_sentence, previous_word))
+        answer = ask_llm(another_guess_prompt(description, previous))
     answer = answer.lower().strip()
     print(f"I think it\'s {answer}.")
     if answer == word:
         print("That's right!")
     else:
         print("No, let's try again!")
-        return describe(word, description, answer)
+        previous.append((description, answer))
+        return describe(word, previous)
     return False
 
 
@@ -101,10 +121,10 @@ def run_alias():
     should_guess = True
     for word in words:
         if should_guess:
-            if guess(word):
+            if guess(word, previous=[]):
                 should_guess = False
         else:
-            if describe(word):
+            if describe(word, previous=[]):
                 should_guess = True
 
 
