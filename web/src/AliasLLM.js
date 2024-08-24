@@ -10,6 +10,9 @@ function AliasGame() {
     const [userInput, setUserInput] = useState("");
     const [history, setHistory] = useState([]);
 
+    const [feedbackMessage, setFeedbackMessage] = useState('');
+    const [showFeedback, setShowFeedback] = useState(false);
+
     useEffect(() => {
         fetchDescriptions(currentWordIndex);
     }, [currentWordIndex]);
@@ -30,7 +33,6 @@ function AliasGame() {
 
         const newDescription = await getOpenAIDescription(word, true, previousInteractions);
         setDescriptions([...descriptions, newDescription]);
-        setCurrentDescriptionIndex(currentDescriptionIndex + 1);
     };
 
     const checkAnswer = (event) => {
@@ -48,15 +50,24 @@ function AliasGame() {
         setHistory([newEntry, ...history]);
 
         if (input === currentWord) {
-            moveToNextWord();
+            setFeedbackMessage('Correct');
+            setDescriptions([]);
         } else {
-            if (currentDescriptionIndex < descriptions.length - 1) {
-                setCurrentDescriptionIndex(currentDescriptionIndex + 1);
+            setFeedbackMessage('Incorrect');
+            setCurrentDescriptionIndex(currentDescriptionIndex + 1);
+        }
+
+        setShowFeedback(true);
+        setTimeout(() => {
+            if (input === currentWord) {
+                moveToNextWord();
             } else {
                 fetchNewDescriptionOnMistake();
             }
-        }
-        setUserInput("");
+
+            setShowFeedback(false);
+            setUserInput("");
+        }, 1000);
     };
 
     const moveToNextWord = () => {
@@ -70,7 +81,10 @@ function AliasGame() {
         <div className="alias-game">
             <h1>Alias</h1>
             <div className="current-description">
-                {descriptions.length > 0 && (
+                {showFeedback && (
+                    <p className={feedbackMessage.toLowerCase()}>{feedbackMessage}</p>
+                )}
+                {descriptions.length > 0 && currentDescriptionIndex >= descriptions.length - 1 && (
                     <p>{descriptions[currentDescriptionIndex]}</p>
                 )}
             </div>

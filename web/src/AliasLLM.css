@@ -1,5 +1,3 @@
-/* src/AliasLLM.css */
-
 body, html, #root {
     height: 100%;
     margin: 0;
@@ -41,7 +39,7 @@ h1 {
     font-size: 1.2rem;
 }
 
-.current-description :last-child {
+.current-description p {
     font-size: 1.5rem;
 }
 
@@ -144,6 +142,16 @@ button[type='button']:hover {
 }
 
 .history-entry .incorrect {
+    color: #ad1d3a;
+    font-weight: bold;
+}
+
+.current-description .correct {
+    color: #b8ff84;
+    font-weight: bold;
+}
+
+.current-description .incorrect {
     color: #ad1d3a;
     font-weight: bold;
 }
