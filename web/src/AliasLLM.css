@@ -1,3 +1,16 @@
+/* src/AliasLLM.css */
+
+body, html, #root {
+    height: 100%;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #ff6a00, #ee0979);
+}
+
+p {
+    color: white;
+}
+
 .alias-game {
     font-family: 'Arial', sans-serif;
     max-width: 600px;
@@ -8,20 +21,24 @@
 }
 
 h1 {
-    color: #4CAF50;
+    color: #ffffff;
     font-size: 3rem;
     margin-bottom: 40px;
     text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .current-description {
-    color: #333;
     margin-bottom: 20px;
-    height: 100px;
+    max-height: 150px;
     overflow-y: auto;
     width: 100%;
-    padding: 10px;
+    padding: 20px;
     box-sizing: border-box;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+    font-size: 1.2rem;
 }
 
 .current-description :last-child {
@@ -37,20 +54,26 @@ h1 {
 input {
     padding: 15px;
     font-size: 1rem;
-    border: 2px solid #4CAF50;
+    border: 2px solid #ffffff;
     border-right: none;
     border-radius: 5px 0 0 5px;
     outline: none;
     width: 300px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+input::placeholder {
+    color: #dcdcdc; /* Light grey placeholder color */
 }
 
 button[type='submit'] {
     margin-top: 20px;
     padding: 15px;
     font-size: 1rem;
-    border: 2px solid #4CAF50;
-    background-color: #4CAF50;
-    color: #fff;
+    border: 2px solid #ffffff;
+    background-color: #ffffff;
+    color: #ff6a00;
     border-left: none;
     border-radius: 0 5px 5px 0;
     outline: none;
@@ -59,16 +82,16 @@ button[type='submit'] {
 }
 
 button[type='submit']:hover {
-    background-color: #45a049;
+    background-color: #dcdcdc;
 }
 
 button[type='button'] {
     margin-top: 20px;
     padding: 15px;
     font-size: 1rem;
-    border: 2px solid #4CAF50;
-    background-color: #4CAF50;
-    color: #fff;
+    border: 2px solid #ffffff;
+    background-color: #ffffff;
+    color: #ff6a00;
     border-radius: 5px;
     outline: none;
     cursor: pointer;
@@ -77,29 +100,32 @@ button[type='button'] {
 }
 
 button[type='button']:hover {
-    background-color: #45a049;
+    background-color: #dcdcdc;
 }
 
 .history {
     font-size: 1rem;
-    color: #555;
+    color: #ffffff;
     margin-top: 20px;
     height: 400px;
     overflow-y: auto;
     width: 100%;
-    border: 2px solid #4CAF50;
+    border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 5px;
     padding: 10px;
     text-align: left;
     box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .history-entry {
     margin-bottom: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 5px;
     padding: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
 }
+
 .history-entry:last-child {
     margin-bottom: 0;
 }
@@ -110,5 +136,14 @@ button[type='button']:hover {
 
 .history-entry p:first-child {
     font-weight: bold;
-    color: #333;
+}
+
+.history-entry .correct {
+    color: #b8ff84;
+    font-weight: bold;
+}
+
+.history-entry .incorrect {
+    color: #ad1d3a;
+    font-weight: bold;
 }

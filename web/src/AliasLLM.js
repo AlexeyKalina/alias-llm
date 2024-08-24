@@ -24,7 +24,6 @@ function AliasGame() {
     const fetchNewDescriptionOnMistake = async () => {
         const word = words[currentWordIndex];
 
-        // Compile previous descriptions and user answers
         const previousInteractions = history.map(entry =>
             `Description: ${entry.description}, Answer: ${entry.answer}`
         ).join("; ");
@@ -43,7 +42,7 @@ function AliasGame() {
             answer: userInput,
             correct: input === currentWord,
             wordIndex: currentWordIndex,
-            description: descriptions[currentDescriptionIndex] // Store actual description text
+            description: descriptions[currentDescriptionIndex]
         };
 
         setHistory([newEntry, ...history]);
@@ -69,7 +68,7 @@ function AliasGame() {
 
     return (
         <div className="alias-game">
-            <h1>Alias Game</h1>
+            <h1>Alias</h1>
             <div className="current-description">
                 {descriptions.length > 0 && (
                     <p>{descriptions[currentDescriptionIndex]}</p>
@@ -89,7 +88,7 @@ function AliasGame() {
                 {history.map((entry, index) => (
                     <div key={index} className="history-entry">
                         <p>{entry.description}</p>
-                        <p style={{ color: entry.correct ? 'green' : 'red' }}>
+                        <p className={entry.correct ? 'correct' : 'incorrect' }>
                             {entry.correct ? "Correct: " : "Incorrect: "} {entry.answer}
                         </p>
                     </div>
